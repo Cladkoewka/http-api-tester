@@ -11,46 +11,83 @@ Built with Go and [`urfave/cli`](https://github.com/urfave/cli).
 - ❌ `DELETE` requests to remove resources
 - 📦 Standalone binary with no runtime dependencies
 
-## 📦 Usage
+## 🏃‍♂️ Usage
 
-### `GET`
+You can run the tool directly with `go run` or use the compiled binary `http-tester`.
 
+### GET
+
+```bash
+http-tester get <URL>
+```
+
+**Example:**
 ```bash
 http-tester get https://jsonplaceholder.typicode.com/posts/1
 ```
 
-### `POST`
+### POST
+
+Supports two options to provide the JSON payload:
+
+- **`--data`**: raw JSON string (escape double quotes in PowerShell)
+- **`--data-file`**: path to a file with JSON content
 
 ```bash
-http-tester post https://jsonplaceholder.typicode.com/posts --data '{"title":"foo", "body":"bar", "userId":1}'
+# Using --data (bash/zsh)
+http-tester post --data '{"title":"foo","body":"bar","userId":1}' https://jsonplaceholder.typicode.com/posts
+
+# Using --data-file
+http-tester post --data-file data.json https://jsonplaceholder.typicode.com/posts
 ```
 
-### `PUT`
+### PUT
+
+Same flags as POST for JSON payload:
 
 ```bash
-http-tester put https://jsonplaceholder.typicode.com/posts/1 --data '{"id":1,"title":"updated","body":"new body","userId":1}'
+# Using --data
+http-tester put --data '{"title":"updated","body":"baz","userId":1}' https://jsonplaceholder.typicode.com/posts/1
+
+# Using --data-file
+http-tester put --data-file update.json https://jsonplaceholder.typicode.com/posts/1
 ```
 
-### `DELETE`
+### DELETE
 
+```bash
+http-tester delete <URL>
+```
+
+**Example:**
 ```bash
 http-tester delete https://jsonplaceholder.typicode.com/posts/1
 ```
 
 ---
 
-## 🧩 Example Output
+## 📄 Examples
 
-```bash
-Status: 200 OK
+**Working POST request in PowerShell:**
 
-{
-  "id": 1,
-  "title": "foo",
-  "body": "bar",
-  "userId": 1
-}
+```powershell
+go run main.go post --data '{"title":"foo","body":"bar","userId":1}' https://jsonplaceholder.typicode.com/posts
 ```
+
+Sample output:
+```text
+Status: 201 Created
+
+{"id":101,"title":"foo","body":"bar","userId":1}
+```
+
+---
+
+## ⚙️ Configuration Options
+
+- `--data` (string): raw JSON data to send in POST/PUT.
+- `--data-file` (string): read JSON payload from file.
+- Either `--data` or `--data-file` must be provided for POST/PUT.
 
 ---
 
@@ -58,3 +95,4 @@ Status: 200 OK
 
 - [Go standard library](https://golang.org/pkg/)
 - [urfave/cli v2](https://github.com/urfave/cli)
+
