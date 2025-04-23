@@ -38,9 +38,12 @@ func main() {
 				Usage: "Send a POST request with JSON body",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
-						Name:     "data",
-						Usage:    "JSON data to send",
-						Required: true,
+						Name:  "data",
+						Usage: "Raw JSON data string",
+					},
+					&cli.StringFlag{
+						Name:  "data-file",
+						Usage: "Path to file containing JSON data",
 					},
 				},
 				Action: func(c *cli.Context) error {
@@ -48,7 +51,21 @@ func main() {
 					if url == "" {
 						return fmt.Errorf("URL is required")
 					}
-					jsonBody := []byte(c.String("data"))
+			
+					var jsonBody []byte
+					var err error
+			
+					if dataFile := c.String("data-file"); dataFile != "" {
+						jsonBody, err = os.ReadFile(dataFile)
+						if err != nil {
+							return fmt.Errorf("could not read file: %w", err)
+						}
+					} else if data := c.String("data"); data != "" {
+						jsonBody = []byte(data)
+					} else {
+						return fmt.Errorf("either --data or --data-file must be set")
+					}
+			
 					resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonBody))
 					if err != nil {
 						return err
@@ -64,9 +81,12 @@ func main() {
 				Usage: "Send a PUT request with JSON body",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
-						Name:     "data",
-						Usage:    "JSON data to send",
-						Required: true,
+						Name:  "data",
+						Usage: "Raw JSON data string",
+					},
+					&cli.StringFlag{
+						Name:  "data-file",
+						Usage: "Path to file containing JSON data",
 					},
 				},
 				Action: func(c *cli.Context) error {
@@ -74,7 +94,21 @@ func main() {
 					if url == "" {
 						return fmt.Errorf("URL is required")
 					}
-					jsonBody := []byte(c.String("data"))
+			
+					var jsonBody []byte
+					var err error
+			
+					if dataFile := c.String("data-file"); dataFile != "" {
+						jsonBody, err = os.ReadFile(dataFile)
+						if err != nil {
+							return fmt.Errorf("could not read file: %w", err)
+						}
+					} else if data := c.String("data"); data != "" {
+						jsonBody = []byte(data)
+					} else {
+						return fmt.Errorf("either --data or --data-file must be set")
+					}
+			
 					req, err := http.NewRequest("PUT", url, bytes.NewBuffer(jsonBody))
 					if err != nil {
 						return err
